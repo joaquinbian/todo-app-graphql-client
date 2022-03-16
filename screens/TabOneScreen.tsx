@@ -20,24 +20,22 @@ export default function TabOneScreen({
   ]);
 
   const createItem = (index: number) => {
-    // console.log(index);
     const newTodos = [...todos];
-    newTodos.splice(index, 0, {
+    newTodos.splice(index + 1, 0, {
       content: "",
-      id: index,
+      id: Date.now(),
       isCompleted: false,
     });
     setTodos(newTodos);
   };
 
-  console.log({ todos });
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tab One</Text>
       <FlatList
         data={todos}
         renderItem={({ item, index }) => (
-          <TodoItem createItem={() => createItem(index + 1)} todo={item} />
+          <TodoItem createItem={() => createItem(index)} todo={item} />
         )}
         keyExtractor={(item) => item.id.toString()}
       />
