@@ -1,34 +1,49 @@
-import { StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import { FlatList, StyleSheet } from "react-native";
 
 import EditScreenInfo from "../components/EditScreenInfo";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Text, View } from "../components/Themed";
 import { RootTabScreenProps } from "../types";
-import { useState } from "react";
 import Checkbox from "../components/Checkbox";
+import TodoItem from "../components/TodoItem";
+import { Todo } from "../inrterfaces/todoInterface";
 
 export default function TabOneScreen({
   navigation,
 }: RootTabScreenProps<"TabOne">) {
-  const [isSelected, setIsSelected] = useState<boolean>(false);
+  const [todos, setTodos] = useState<Todo[]>([
+    { id: 1, content: "Buy milk", isCompleted: false },
+    { id: 2, content: "Buy brad", isCompleted: false },
+    { id: 3, content: "Buy pizza", isCompleted: false },
+    { id: 4, content: "Buy cereals", isCompleted: false },
+  ]);
 
-  const handleCheckBox = (): void => {
-    setIsSelected((selected) => !selected);
+  const createItem = (index: number) => {
+    // console.log(index);
+    const newTodos = [...todos];
+    newTodos.splice(index, 0, {
+      content: "",
+      id: index,
+      isCompleted: false,
+    });
+    setTodos(newTodos);
   };
+
+  console.log({ todos });
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tab One</Text>
-
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <Checkbox isChecked={isSelected} onPress={handleCheckBox} />
-        <TextInput
-          style={{
-            flex: 1,
-            fontSize: 17,
-            color: "#fff",
-          }}
-        />
-      </View>
+      <FlatList
+        data={todos}
+        renderItem={({ item, index }) => (
+          <TodoItem createItem={() => createItem(index + 1)} todo={item} />
+        )}
+        keyExtractor={(item) => item.id.toString()}
+      />
+      {/* {todos.map((item) => (
+        <TodoItem todo={item} />
+      ))} */}
     </View>
   );
 }
@@ -36,7 +51,6 @@ export default function TabOneScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
   },
   title: {
     fontSize: 20,
