@@ -38,12 +38,8 @@ export default function TabOneScreen({
   };
 
   const deleteItem = (id: number) => {
-    console.log({ id });
-
     setTodos((list) => list.filter((item) => item.id !== id));
   };
-
-  console.log({ title });
 
   return (
     <KeyboardAvoidingView

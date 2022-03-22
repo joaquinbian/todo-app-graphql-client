@@ -55,13 +55,17 @@ const TodoItem = ({ todo, createItem, deleteItem }: TodoItemProps) => {
   const handleDeleteTodo = (
     e: NativeSyntheticEvent<TextInputKeyPressEventData>
   ) => {
-    console.log({ e: e.nativeEvent.key === "Backspace" });
-
     if (todoContent.length > 0) return;
     if (todoContent.length === 0 && e.nativeEvent.key === "Backspace") {
       deleteItem(todo.id);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      console.log("me desmonto", todo.id);
+    };
+  }, []);
 
   return (
     <View style={{ flexDirection: "row", alignItems: "center" }}>
