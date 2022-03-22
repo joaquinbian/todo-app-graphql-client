@@ -5,6 +5,7 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  TextInput,
 } from "react-native";
 
 import EditScreenInfo from "../components/EditScreenInfo";
@@ -18,6 +19,7 @@ import { Todo } from "../inrterfaces/todoInterface";
 export default function TabOneScreen({
   navigation,
 }: RootTabScreenProps<"TabOne">) {
+  const [title, setTitle] = useState<string>("");
   const [todos, setTodos] = useState<Todo[]>([
     { id: 1, content: "Buy milk", isCompleted: false },
     { id: 2, content: "Buy brad", isCompleted: false },
@@ -36,24 +38,34 @@ export default function TabOneScreen({
   };
 
   const deleteItem = (id: number) => {
+    console.log({ id });
+
     setTodos((list) => list.filter((item) => item.id !== id));
   };
 
+  console.log({ title });
+
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      // keyboardVerticalOffset={Platform.OS === "ios" ? 130 : 140}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      // keyboardVerticalOffset={-500}
       enabled
       style={{ flex: 1 }}
     >
       <View style={styles.container}>
-        <Text style={styles.title}>Tab One</Text>
+        {/* <Text style={styles.title}>Tab One</Text> */}
+        <TextInput
+          style={styles.title}
+          onChangeText={setTitle}
+          placeholder="todo list title..."
+          placeholderTextColor="rgba(255, 255, 255, .3)"
+        />
         <FlatList
           data={todos}
           renderItem={({ item, index }) => (
             <TodoItem
               createItem={() => createItem(index)}
-              deleteItem={deleteItem}
+              deleteItem={(id) => deleteItem(id)}
               todo={item}
             />
           )}
@@ -69,8 +81,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
+    color: "#fff",
     fontWeight: "bold",
+    // backgroundColor: "red",
+    margin: 5,
   },
   separator: {
     marginVertical: 30,
