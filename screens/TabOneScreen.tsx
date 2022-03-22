@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 
 import EditScreenInfo from "../components/EditScreenInfo";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -29,20 +35,32 @@ export default function TabOneScreen({
     setTodos(newTodos);
   };
 
+  const deleteItem = (id: number) => {
+    setTodos((list) => list.filter((item) => item.id !== id));
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <FlatList
-        data={todos}
-        renderItem={({ item, index }) => (
-          <TodoItem createItem={() => createItem(index)} todo={item} />
-        )}
-        keyExtractor={(item) => item.id.toString()}
-      />
-      {/* {todos.map((item) => (
-        <TodoItem todo={item} />
-      ))} */}
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      // keyboardVerticalOffset={Platform.OS === "ios" ? 130 : 140}
+      enabled
+      style={{ flex: 1 }}
+    >
+      <View style={styles.container}>
+        <Text style={styles.title}>Tab One</Text>
+        <FlatList
+          data={todos}
+          renderItem={({ item, index }) => (
+            <TodoItem
+              createItem={() => createItem(index)}
+              deleteItem={deleteItem}
+              todo={item}
+            />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 

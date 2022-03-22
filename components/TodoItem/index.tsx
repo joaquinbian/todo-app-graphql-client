@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TextInputKeyPressEventData,
   TextInputSubmitEditingEventData,
   View,
 } from "react-native";
@@ -13,9 +14,10 @@ import Checkbox from "../Checkbox";
 interface TodoItemProps {
   todo: Todo;
   createItem: () => void;
+  deleteItem: (id: number) => void;
 }
 
-const TodoItem = ({ todo, createItem }: TodoItemProps) => {
+const TodoItem = ({ todo, createItem, deleteItem }: TodoItemProps) => {
   const input = useRef(null);
   const [isSelected, setIsSelected] = useState<boolean>(todo.isCompleted);
   const [todoContent, setTodoContent] = useState<string>(todo.content);
@@ -26,16 +28,40 @@ const TodoItem = ({ todo, createItem }: TodoItemProps) => {
   const onSubmit = (
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>
   ) => {
-    console.warn("pija");
+    // console.warn("pija");
     console.log({ target: e });
   };
+
+  useEffect(() => {
+    if (!todo) {
+      return;
+    }
+
+    setIsSelected(todo.isCompleted);
+    setTodoContent(todo.content);
+  }, [todo]);
 
   useEffect(() => {
     if (input.current) {
       input?.current?.focus();
     }
-    // console.log({ todo }, "ME MONTO");
   }, [input]);
+
+  const handleCreateNewItem = () => {
+    if (todoContent.length === 0) return;
+    createItem();
+  };
+
+  const handleDeleteTodo = (
+    e: NativeSyntheticEvent<TextInputKeyPressEventData>
+  ) => {
+    console.log({ e: e.nativeEvent.key === "Backspace" });
+
+    if (todoContent.length > 0) return;
+    if (todoContent.length === 0 && e.nativeEvent.key === "Backspace") {
+      deleteItem(todo.id);
+    }
+  };
 
   return (
     <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -47,11 +73,12 @@ const TodoItem = ({ todo, createItem }: TodoItemProps) => {
           fontSize: 17,
           color: "#fff",
         }}
-        multiline
+        // multiline
         value={todoContent}
         onChangeText={setTodoContent}
         //se ejecuta cuando el boton de submit(enter) se presiona
-        onSubmitEditing={createItem}
+        onSubmitEditing={handleCreateNewItem}
+        onKeyPress={handleDeleteTodo}
         //se pierde el focus de donde estabamos cuando ejecutamos el onSubmit
         blurOnSubmit
       />
