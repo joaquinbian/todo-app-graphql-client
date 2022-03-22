@@ -7,7 +7,7 @@ import ProjectItem from "../components/ProjectComponent/ProjectItem";
 import { useState } from "react";
 import { Project } from "../inrterfaces/projectInterface";
 
-export default function TabTwoScreen() {
+export default function ProjectsScreen() {
   const [projects, setProjects] = useState<Project[]>([
     { id: 1, title: "project", createdAt: "2d" },
     { id: 2, title: "project2", createdAt: "3d" },

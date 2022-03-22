@@ -16,7 +16,7 @@ import Checkbox from "../components/Checkbox";
 import TodoItem from "../components/TodoItem";
 import { Todo } from "../inrterfaces/todoInterface";
 
-export default function TabOneScreen({
+export default function TodoScreen({
   navigation,
 }: RootTabScreenProps<"TabOne">) {
   const [title, setTitle] = useState<string>("");
