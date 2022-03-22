@@ -19,6 +19,7 @@ export default function TabTwoScreen() {
         data={projects}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <ProjectItem project={item} />}
+        ItemSeparatorComponent={() => <View style={{ margin: 5 }} />}
       />
     </View>
   );
