@@ -24,6 +24,8 @@ export type RootStackParamList = {
   TodoScreen: {
     id: number;
   };
+  SignInScreen: undefined;
+  SignUpScreen: undefined;
   NotFound: undefined;
 };
 

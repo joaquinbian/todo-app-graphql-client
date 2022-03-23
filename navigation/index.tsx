@@ -28,6 +28,8 @@ import {
 import LinkingConfiguration from "./LinkingConfiguration";
 import ProjectsScreen from "../screens/ProjectsScreen";
 import TodoScreen from "../screens/ToDoScreen";
+import SignInScreen from "../screens/SignInScreen";
+import SignUpScreen from "../screens/SignUpScreen";
 
 export default function Navigation({
   colorScheme,
@@ -55,7 +57,8 @@ function RootNavigator() {
     <Stack.Navigator
       screenOptions={{
         headerTitleAlign: "center",
-        // presentation: "card",
+
+        presentation: "modal",
         animation: "slide_from_right",
       }}
     >
@@ -64,6 +67,16 @@ function RootNavigator() {
         component={BottomTabNavigator}
         options={{ headerShown: false }}
       /> */}
+      <Stack.Screen
+        name="SignInScreen"
+        component={SignInScreen}
+        options={{ title: "Sign In" }}
+      />
+      <Stack.Screen
+        name="SignUpScreen"
+        component={SignUpScreen}
+        options={{ title: "Sign Up" }}
+      />
       <Stack.Screen name="Home" component={ProjectsScreen} />
       <Stack.Screen name="TodoScreen" component={TodoScreen} />
       <Stack.Screen
