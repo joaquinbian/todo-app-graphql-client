@@ -1,9 +1,11 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 
 //luego pasarlo a un .env
-const URI = "http://localhost:4000/";
+const URI = new HttpLink({
+  uri: "http://localhost:4000/",
+});
 
 export const client = new ApolloClient({
-  uri: URI,
+  uri: "http://192.168.0.76:4000",
   cache: new InMemoryCache(),
 });

@@ -2,15 +2,48 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button, Input } from "@react-native-elements/base";
 import { AntDesign, Ionicons, Feather } from "@expo/vector-icons";
+import { gql, useMutation } from "@apollo/client";
+
+const SIGN_UP = gql`
+  mutation signUp($email: String!, $name: String!, $password: String!) {
+    signUp(input: { email: $email, name: $name, password: $password }) {
+      code
+      success
+      user {
+        user {
+          name
+          email
+        }
+        token
+      }
+    }
+  }
+`;
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [signUp, { loading, data, error }] = useMutation(SIGN_UP, {
+    variables: {
+      email,
+      name,
+      password,
+    },
+    onCompleted: (data) => {
+      console.log({ data });
+    },
+  });
+
+  console.log({ data, error: error?.networkError?.message });
 
   const handlePasswordVisibility = () => {
     setPasswordVisible((isVisible) => !isVisible);
+  };
+
+  const onSubmit = () => {
+    signUp();
   };
   return (
     <View style={styles.container}>
@@ -48,6 +81,8 @@ const SignUpScreen = () => {
 
       <Button
         title="create account"
+        loading={loading}
+        onPress={onSubmit}
         buttonStyle={{ backgroundColor: "#F35046" }}
         // titleStyle={{ color: "black" }}
       />
