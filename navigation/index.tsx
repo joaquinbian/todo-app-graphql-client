@@ -30,6 +30,7 @@ import ProjectsScreen from "../screens/ProjectsScreen";
 import TodoScreen from "../screens/ToDoScreen";
 import SignInScreen from "../screens/SignInScreen";
 import SignUpScreen from "../screens/SignUpScreen";
+import * as SecureStore from "expo-secure-store";
 
 export default function Navigation({
   colorScheme,
@@ -51,6 +52,10 @@ export default function Navigation({
  * https://reactnavigation.org/docs/modal
  */
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const isAuthenticated = async () => {
+  const token = await SecureStore.getItemAsync("token");
+  return !!token;
+};
 
 function RootNavigator() {
   return (
@@ -62,28 +67,36 @@ function RootNavigator() {
         animation: "slide_from_right",
       }}
     >
+      {isAuthenticated() ? (
+        <>
+          <Stack.Screen
+            name="SignInScreen"
+            component={SignInScreen}
+            options={{ title: "Sign In" }}
+          />
+          <Stack.Screen
+            name="SignUpScreen"
+            component={SignUpScreen}
+            options={{ title: "Sign Up" }}
+          />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Home" component={ProjectsScreen} />
+          <Stack.Screen name="TodoScreen" component={TodoScreen} />
+          <Stack.Screen
+            name="NotFound"
+            component={NotFoundScreen}
+            options={{ title: "Oops!" }}
+          />
+        </>
+      )}
       {/* <Stack.Screen
         name="Root"
         component={BottomTabNavigator}
         options={{ headerShown: false }}
       /> */}
-      <Stack.Screen
-        name="SignInScreen"
-        component={SignInScreen}
-        options={{ title: "Sign In" }}
-      />
-      <Stack.Screen
-        name="SignUpScreen"
-        component={SignUpScreen}
-        options={{ title: "Sign Up" }}
-      />
-      <Stack.Screen name="Home" component={ProjectsScreen} />
-      <Stack.Screen name="TodoScreen" component={TodoScreen} />
-      <Stack.Screen
-        name="NotFound"
-        component={NotFoundScreen}
-        options={{ title: "Oops!" }}
-      />
+
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>

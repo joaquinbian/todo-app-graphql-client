@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import * as SecureStore from "expo-secure-store";
 import { Button, Input } from "@react-native-elements/base";
 import { AntDesign, Ionicons, Feather } from "@expo/vector-icons";
 import { gql, useMutation } from "@apollo/client";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../types";
 
 const SIGN_UP = gql`
   mutation signUp($email: String!, $name: String!, $password: String!) {
     signUp(input: { email: $email, name: $name, password: $password }) {
       code
       success
+      message
       user {
         user {
           name
@@ -20,7 +24,10 @@ const SIGN_UP = gql`
   }
 `;
 
-const SignUpScreen = () => {
+interface Props
+  extends NativeStackScreenProps<RootStackParamList, "SignUpScreen"> {}
+
+const SignUpScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -31,12 +38,15 @@ const SignUpScreen = () => {
       name,
       password,
     },
-    onCompleted: (data) => {
-      console.log({ data });
+    onCompleted: async (data) => {
+      // console.log({ data }, "data en el onCompleted");
+      if (data.signUp.code >= 400) return;
+      await SecureStore.setItemAsync("token", data.signUp.user.token);
+      // navigation.navigate("Home");
     },
   });
 
-  console.log({ data, error: error?.networkError?.message });
+  console.log({ data, error: error });
 
   const handlePasswordVisibility = () => {
     setPasswordVisible((isVisible) => !isVisible);
@@ -45,6 +55,11 @@ const SignUpScreen = () => {
   const onSubmit = () => {
     signUp();
   };
+
+  // //any --> mal
+  // const onComplete = async (data: any) => {
+  //   await SecureStore.setItemAsync("token", data.signUp.user.token);
+  // };
   return (
     <View style={styles.container}>
       <Text>sign up screen</Text>
