@@ -42,7 +42,7 @@ const SignUpScreen = ({ navigation }: Props) => {
       // console.log({ data }, "data en el onCompleted");
       if (data.signUp.code >= 400) return;
       await SecureStore.setItemAsync("token", data.signUp.user.token);
-      // navigation.navigate("Home");
+      navigation.navigate("Home");
     },
   });
 
@@ -53,6 +53,8 @@ const SignUpScreen = ({ navigation }: Props) => {
   };
 
   const onSubmit = () => {
+    console.log({ email, name, password });
+
     signUp();
   };
 
@@ -80,7 +82,7 @@ const SignUpScreen = ({ navigation }: Props) => {
       />
       <Input
         placeholder="password"
-        onChangeText={setEmail}
+        onChangeText={setPassword}
         style={{ color: "white" }}
         containerStyle={styles.inputContainer}
         secureTextEntry={!passwordVisible}

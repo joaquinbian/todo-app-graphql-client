@@ -38,7 +38,7 @@ const SignInScreen = ({ navigation }: Props) => {
       console.log({ data }, "data en onCOmpleted signIN");
       if (data.signIn.code >= 400) return;
       await SecureStore.setItemAsync("token", data.signIn.user.token);
-      // navigation.navigate("Home");
+      navigation.navigate("Home");
     },
   });
 
@@ -47,6 +47,7 @@ const SignInScreen = ({ navigation }: Props) => {
   };
 
   const onSubmit = () => {
+    // console.log({ email, password }, "EN SUGNIN");
     signIn();
   };
 
