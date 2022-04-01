@@ -32,6 +32,7 @@ import SignInScreen from "../screens/SignInScreen";
 import SignUpScreen from "../screens/SignUpScreen";
 import * as SecureStore from "expo-secure-store";
 import { isLoaded } from "expo-font";
+import { useUser } from "../hooks/useUser";
 
 export default function Navigation({
   colorScheme,
@@ -55,6 +56,7 @@ export default function Navigation({
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
+  const { user } = useUser();
   return (
     <Stack.Navigator
       screenOptions={{
@@ -64,18 +66,26 @@ function RootNavigator() {
         animation: "slide_from_right",
       }}
     >
-      <Stack.Screen
-        name="SignInScreen"
-        component={SignInScreen}
-        options={{ title: "Sign In" }}
-      />
-      <Stack.Screen
-        name="SignUpScreen"
-        component={SignUpScreen}
-        options={{ title: "Sign Up" }}
-      />
-      <Stack.Screen name="Home" component={ProjectsScreen} />
-      <Stack.Screen name="TodoScreen" component={TodoScreen} />
+      {!user ? (
+        <>
+          <Stack.Screen
+            name="SignInScreen"
+            component={SignInScreen}
+            options={{ title: "Sign In" }}
+          />
+          <Stack.Screen
+            name="SignUpScreen"
+            component={SignUpScreen}
+            options={{ title: "Sign Up" }}
+          />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Home" component={ProjectsScreen} />
+          <Stack.Screen name="TodoScreen" component={TodoScreen} />
+        </>
+      )}
+
       <Stack.Screen
         name="NotFound"
         component={NotFoundScreen}
