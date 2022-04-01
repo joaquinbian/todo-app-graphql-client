@@ -14,17 +14,17 @@ import { Text, View } from "../components/Themed";
 import { RootTabScreenProps } from "../types";
 import Checkbox from "../components/Checkbox";
 import TodoItem from "../components/TodoItem";
-import { Todo } from "../inrterfaces/todoInterface";
+import { ToDo } from "../inrterfaces/todoInterface";
 
 export default function TodoScreen({
   navigation,
 }: RootTabScreenProps<"TabOne">) {
   const [title, setTitle] = useState<string>("");
-  const [todos, setTodos] = useState<Todo[]>([
-    { id: 1, content: "Buy milk", isCompleted: false },
-    { id: 2, content: "Buy brad", isCompleted: false },
-    { id: 3, content: "Buy pizza", isCompleted: false },
-    { id: 4, content: "Buy cereals", isCompleted: false },
+  const [todos, setTodos] = useState<ToDo[]>([
+    { id: 1, content: "Buy milk", isCompleted: false, taskList: null },
+    { id: 2, content: "Buy brad", isCompleted: false, taskList: null },
+    { id: 3, content: "Buy pizza", isCompleted: false, taskList: null },
+    { id: 4, content: "Buy cereals", isCompleted: false, taskList: null },
   ]);
 
   const createItem = (index: number) => {
@@ -33,6 +33,7 @@ export default function TodoScreen({
       content: "",
       id: Date.now(),
       isCompleted: false,
+      taskList: null,
     });
     setTodos(newTodos);
   };

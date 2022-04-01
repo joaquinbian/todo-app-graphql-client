@@ -8,11 +8,11 @@ import {
   TextInputSubmitEditingEventData,
   View,
 } from "react-native";
-import { Todo } from "../../inrterfaces/todoInterface";
+import { ToDo } from "../../inrterfaces/todoInterface";
 import Checkbox from "../Checkbox";
 
 interface TodoItemProps {
-  todo: Todo;
+  todo: ToDo;
   createItem: () => void;
   deleteItem: (id: number) => void;
 }

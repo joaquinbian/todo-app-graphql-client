@@ -7,6 +7,9 @@ import ProjectItem from "../components/ProjectComponent/ProjectItem";
 import { useEffect, useState } from "react";
 import { Project } from "../inrterfaces/projectInterface";
 import { gql, useQuery } from "@apollo/client";
+import { User } from "../inrterfaces/userInterface";
+import { GetTaskListData } from "../inrterfaces/graphql-Interfaces/getTaskListInterface";
+import { ToDo } from "../inrterfaces/todoInterface";
 
 const GET_TASKLIST = gql`
   query {
@@ -30,9 +33,25 @@ const GET_TASKLIST = gql`
   }
 `;
 
+// id: ID!
+//     title: String!
+//     createdAt: String!
+//     progress: Float!
+//     users: [User!]!
+//     toDos: [ToDo!]!
+
+export interface TaskList {
+  id: any;
+  title: string;
+  createdAt: string;
+  progress: number;
+  users: User[];
+  toDos: ToDo[];
+}
+
 export default function ProjectsScreen() {
-  const [projects, setProjects] = useState<Project[]>();
-  const { data, loading, error } = useQuery(GET_TASKLIST);
+  const [projects, setProjects] = useState<TaskList[]>();
+  const { data, loading, error } = useQuery<GetTaskListData>(GET_TASKLIST);
 
   console.log({ data }, "en projects screen");
 

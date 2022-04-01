@@ -4,9 +4,10 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { styles } from "./styles";
 import { Project } from "../../inrterfaces/projectInterface";
 import { useNavigation } from "@react-navigation/native";
+import { TaskList } from "../../screens/ProjectsScreen";
 
 interface Props {
-  project: Project;
+  project: TaskList;
 }
 
 const ProjectItem = ({ project }: Props) => {

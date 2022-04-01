@@ -8,6 +8,11 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as SecureStore from "expo-secure-store";
 import { RootStackParamList } from "../types";
 import { useUser } from "../hooks/useUser";
+import { User } from "../inrterfaces/userInterface";
+import {
+  SignInSignUpResponse,
+  SignInVars,
+} from "../inrterfaces/graphql-Interfaces/signIn-signUpInterfaces";
 
 const SIGN_IN = gql`
   mutation signIn($email: String!, $password: String!) {
@@ -19,6 +24,8 @@ const SIGN_IN = gql`
         user {
           name
           email
+          id
+          avatar
         }
         token
       }
@@ -33,15 +40,17 @@ const SignInScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
-  const { login, logout, user } = useUser();
-  const [signIn, { data, loading, error }] = useMutation(SIGN_IN, {
+  const { login, user } = useUser();
+  const [signIn, { data, loading, error }] = useMutation<
+    { signIn: SignInSignUpResponse },
+    SignInVars
+  >(SIGN_IN, {
     variables: { email, password },
     onCompleted: async (data) => {
       console.log({ data }, "data en onCOmpleted signIN");
       if (data.signIn.code >= 400) return;
-      // await SecureStore.setItemAsync("token", data.signIn.user.token);
+
       await login(data.signIn.user.user, data.signIn.user.token);
-      navigation.navigate("Home");
     },
   });
 

@@ -6,6 +6,11 @@ import { AntDesign, Ionicons, Feather } from "@expo/vector-icons";
 import { gql, useMutation } from "@apollo/client";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
+import { useUser } from "../hooks/useUser";
+import {
+  SignInSignUpResponse,
+  SignUpVars,
+} from "../inrterfaces/graphql-Interfaces/signIn-signUpInterfaces";
 
 const SIGN_UP = gql`
   mutation signUp($email: String!, $name: String!, $password: String!) {
@@ -17,6 +22,8 @@ const SIGN_UP = gql`
         user {
           name
           email
+          id
+          avatar
         }
         token
       }
@@ -32,17 +39,17 @@ const SignUpScreen = ({ navigation }: Props) => {
   const [name, setName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
-  const [signUp, { loading, data, error }] = useMutation(SIGN_UP, {
-    variables: {
-      email,
-      name,
-      password,
-    },
+  const { login } = useUser();
+  const [signUp, { loading, data, error }] = useMutation<
+    { signUp: SignInSignUpResponse },
+    SignUpVars
+  >(SIGN_UP, {
+    variables: { email, password, name },
     onCompleted: async (data) => {
       // console.log({ data }, "data en el onCompleted");
       if (data.signUp.code >= 400) return;
-      await SecureStore.setItemAsync("token", data.signUp.user.token);
-      navigation.navigate("Home");
+      await login(data.signUp.user.user, data.signUp.user.token);
+      // await login(data.signUp.user.user, data.signUp.user.token);
     },
   });
 
