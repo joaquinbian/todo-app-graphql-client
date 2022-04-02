@@ -24,16 +24,21 @@ const ProjectItem = ({ project }: Props) => {
 
   return (
     // <Text style={{ color: "white" }}>{project.title}</Text>
-    // <Animated.View entering={SlideInRight} style={{ backgroundColor: "red" }}>
-    <Pressable
-      style={[styles.projectStyle, { backgroundColor: "red" }]}
-      onPress={navigate}
-    >
-      <AntDesign name="file1" size={25} color="gray" style={styles.iconStyle} />
-      <Text style={styles.title}>{project.title}</Text>
-      <Text style={styles.projectDate}>{project.createdAt}</Text>
-    </Pressable>
-    // </Animated.View>
+    <Animated.View entering={SlideInRight} style={{ backgroundColor: "red" }}>
+      <Pressable
+        style={[styles.projectStyle, { backgroundColor: "red" }]}
+        onPress={navigate}
+      >
+        <AntDesign
+          name="file1"
+          size={25}
+          color="gray"
+          style={styles.iconStyle}
+        />
+        <Text style={styles.title}>{project.title}</Text>
+        <Text style={styles.projectDate}>{project.createdAt}</Text>
+      </Pressable>
+    </Animated.View>
   );
 };
 

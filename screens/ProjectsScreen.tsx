@@ -1,4 +1,10 @@
-import { ActivityIndicator, FlatList, StyleSheet } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  useWindowDimensions,
+} from "react-native";
 
 import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
@@ -10,7 +16,8 @@ import { gql, useQuery } from "@apollo/client";
 import { User } from "../inrterfaces/userInterface";
 import { GetTaskListData } from "../inrterfaces/graphql-Interfaces/getTaskListInterface";
 import { ToDo } from "../inrterfaces/todoInterface";
-import Animated from "react-native-reanimated";
+import Animated, { SlideInRight } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const GET_TASKLIST = gql`
   query GetTaskList {
@@ -50,6 +57,20 @@ export interface TaskList {
   toDos: ToDo[];
 }
 
+const renderItem = ({
+  item,
+  index,
+}: {
+  item: { name: string };
+  index: number;
+}) => {
+  return (
+    <Animated.View entering={SlideInRight}>
+      <Text style={{ color: "white", fontWeight: "bold" }}>{item.name}</Text>
+    </Animated.View>
+  );
+};
+
 export default function ProjectsScreen() {
   const [projects, setProjects] = useState<TaskList[]>();
   const { data, loading, error } = useQuery<GetTaskListData>(GET_TASKLIST, {
@@ -60,40 +81,32 @@ export default function ProjectsScreen() {
     },
     // fetchPolicy: "network-only",
   });
-
-  console.log({ error });
-
-  // console.log({ data }, "en projects screen");
-
-  // console.log({ data });
-  console.log(projects?.length, "projects length");
+  const { top } = useSafeAreaInsets();
 
   useEffect(() => {
-    console.log("me ejecuto useefect de data");
-
-    // setProjects(data?.getTaskList);
+    setProjects(data?.getTaskList);
   }, [data]);
 
   if (loading) {
     return (
-      <View style={{ alignItems: "center" }}>
+      <View style={[styles.container, { marginTop: top + 50 }]}>
         <ActivityIndicator color="white" size={24} />
         <Text>Loading task list ...</Text>
       </View>
     );
   }
 
-  console.log({ loading });
-
   return (
-    <View style={styles.container}>
+    // <View style={[styles.container, { marginTop: top + 60 }]}>
+    <SafeAreaView style={[styles.container, { marginTop: top + 60 }]}>
       <FlatList
-        data={data?.getTaskList}
+        data={projects}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <ProjectItem project={item} />}
         ItemSeparatorComponent={() => <View style={{ margin: 5 }} />}
       />
-    </View>
+    </SafeAreaView>
+    // </View>
   );
 }
 
