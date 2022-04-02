@@ -10,9 +10,10 @@ import { gql, useQuery } from "@apollo/client";
 import { User } from "../inrterfaces/userInterface";
 import { GetTaskListData } from "../inrterfaces/graphql-Interfaces/getTaskListInterface";
 import { ToDo } from "../inrterfaces/todoInterface";
+import Animated from "react-native-reanimated";
 
 const GET_TASKLIST = gql`
-  query {
+  query GetTaskList {
     getTaskList {
       id
       title
@@ -51,12 +52,26 @@ export interface TaskList {
 
 export default function ProjectsScreen() {
   const [projects, setProjects] = useState<TaskList[]>();
-  const { data, loading, error } = useQuery<GetTaskListData>(GET_TASKLIST);
+  const { data, loading, error } = useQuery<GetTaskListData>(GET_TASKLIST, {
+    onCompleted: (data) => {
+      console.log("me complete get tasklist");
+      // console.log(data.getTaskList.length);
+      // setProjects(data.getTaskList);
+    },
+    // fetchPolicy: "network-only",
+  });
 
-  console.log({ data }, "en projects screen");
+  console.log({ error });
+
+  // console.log({ data }, "en projects screen");
+
+  // console.log({ data });
+  console.log(projects?.length, "projects length");
 
   useEffect(() => {
-    setProjects(data?.getTaskList);
+    console.log("me ejecuto useefect de data");
+
+    // setProjects(data?.getTaskList);
   }, [data]);
 
   if (loading) {
@@ -68,10 +83,12 @@ export default function ProjectsScreen() {
     );
   }
 
+  console.log({ loading });
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={projects}
+        data={data?.getTaskList}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <ProjectItem project={item} />}
         ItemSeparatorComponent={() => <View style={{ margin: 5 }} />}

@@ -49,6 +49,7 @@ const SignUpScreen = ({ navigation }: Props) => {
       // console.log({ data }, "data en el onCompleted");
       if (data.signUp.code >= 400) return;
       await login(data.signUp.user.user, data.signUp.user.token);
+      navigation.navigate("Home");
       // await login(data.signUp.user.user, data.signUp.user.token);
     },
   });

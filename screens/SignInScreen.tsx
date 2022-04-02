@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Icon, Input } from "@react-native-elements/base";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { gql, useMutation } from "@apollo/client";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as SecureStore from "expo-secure-store";
@@ -47,14 +47,15 @@ const SignInScreen = ({ navigation }: Props) => {
   >(SIGN_IN, {
     variables: { email, password },
     onCompleted: async (data) => {
-      console.log({ data }, "data en onCOmpleted signIN");
+      // console.log({ data }, "data en onCOmpleted signIN");
       if (data.signIn.code >= 400) return;
 
       await login(data.signIn.user.user, data.signIn.user.token);
+      // navigation.navigate("Home");
     },
   });
 
-  console.log({ user }, "en signin");
+  // console.log({ user }, "en signin");
 
   const handlePasswordVisibility = (): void => {
     setPasswordVisible((isVisible) => !isVisible);
