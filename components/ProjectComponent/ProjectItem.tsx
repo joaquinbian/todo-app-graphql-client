@@ -24,7 +24,7 @@ const ProjectItem = ({ project }: Props) => {
 
   return (
     // <Text style={{ color: "white" }}>{project.title}</Text>
-    <Animated.View entering={SlideInRight} style={{ backgroundColor: "red" }}>
+    <Animated.View entering={SlideInRight}>
       <Pressable
         style={[styles.projectStyle, { backgroundColor: "red" }]}
         onPress={navigate}

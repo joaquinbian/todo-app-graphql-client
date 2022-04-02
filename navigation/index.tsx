@@ -81,7 +81,11 @@ function RootNavigator() {
         </>
       ) : (
         <>
-          <Stack.Screen name="Home" component={ProjectsScreen} />
+          <Stack.Screen
+            name="Home"
+            component={ProjectsScreen}
+            // options={{ headerShown: false }}
+          />
           <Stack.Screen name="TodoScreen" component={TodoScreen} />
         </>
       )}

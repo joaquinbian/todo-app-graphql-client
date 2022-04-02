@@ -2,6 +2,7 @@ import {
   ActivityIndicator,
   FlatList,
   SafeAreaView,
+  StatusBar,
   StyleSheet,
   useWindowDimensions,
 } from "react-native";
@@ -19,6 +20,10 @@ import { ToDo } from "../inrterfaces/todoInterface";
 import Animated, { SlideInRight } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TaskList } from "../inrterfaces/taskListInterface";
+import { Platform } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../types";
+import useApplyHeaderWorkaround from "../hooks/useApplyHeaderWorkaround";
 
 const GET_TASKLIST = gql`
   query GetTaskList {
@@ -42,38 +47,13 @@ const GET_TASKLIST = gql`
   }
 `;
 
-// id: ID!
-//     title: String!
-//     createdAt: String!
-//     progress: Float!
-//     users: [User!]!
-//     toDos: [ToDo!]!
+interface Props extends NativeStackScreenProps<RootStackParamList, "Home"> {}
 
-const renderItem = ({
-  item,
-  index,
-}: {
-  item: { name: string };
-  index: number;
-}) => {
-  return (
-    <Animated.View entering={SlideInRight}>
-      <Text style={{ color: "white", fontWeight: "bold" }}>{item.name}</Text>
-    </Animated.View>
-  );
-};
-
-export default function ProjectsScreen() {
+export default function ProjectsScreen({ navigation }: Props) {
   const [projects, setProjects] = useState<TaskList[]>();
-  const { data, loading, error } = useQuery<GetTaskListData>(GET_TASKLIST, {
-    onCompleted: (data) => {
-      console.log("me complete get tasklist");
-      // console.log(data.getTaskList.length);
-      // setProjects(data.getTaskList);
-    },
-    // fetchPolicy: "network-only",
-  });
+  const { data, loading, error } = useQuery<GetTaskListData>(GET_TASKLIST);
   const { top } = useSafeAreaInsets();
+  useApplyHeaderWorkaround(navigation.setOptions);
 
   useEffect(() => {
     setProjects(data?.getTaskList);
@@ -81,7 +61,14 @@ export default function ProjectsScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.container, { marginTop: top + 50 }]}>
+      <View
+        style={[
+          styles.container,
+          {
+            marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+          },
+        ]}
+      >
         <ActivityIndicator color="white" size={24} />
         <Text>Loading task list ...</Text>
       </View>
@@ -89,8 +76,7 @@ export default function ProjectsScreen() {
   }
 
   return (
-    // <View style={[styles.container, { marginTop: top + 60 }]}>
-    <SafeAreaView style={[styles.container, { marginTop: top + 60 }]}>
+    <SafeAreaView style={[styles.container]}>
       <FlatList
         data={projects}
         keyExtractor={(item) => item.id.toString()}
@@ -98,7 +84,6 @@ export default function ProjectsScreen() {
         ItemSeparatorComponent={() => <View style={{ margin: 5 }} />}
       />
     </SafeAreaView>
-    // </View>
   );
 }
 
