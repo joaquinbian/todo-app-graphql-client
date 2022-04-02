@@ -11,14 +11,38 @@ import {
 import EditScreenInfo from "../components/EditScreenInfo";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Text, View } from "../components/Themed";
-import { RootTabScreenProps } from "../types";
+import { RootStackParamList, RootTabScreenProps } from "../types";
 import Checkbox from "../components/Checkbox";
 import TodoItem from "../components/TodoItem";
 import { ToDo } from "../inrterfaces/todoInterface";
+import { gql, useQuery } from "@apollo/client";
+import { TaskList } from "../inrterfaces/taskListInterface";
+import {
+  GetTaskListByIdData,
+  GetTaskListByIdVars,
+} from "../inrterfaces/graphql-Interfaces/getTaskListByIdInterface";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-export default function TodoScreen({
-  navigation,
-}: RootTabScreenProps<"TabOne">) {
+const GET_TODOLIST = gql`
+  query getTaskListById($id: ID!) {
+    getTaskListById(id: $id) {
+      id
+      title
+      createdAt
+      progress
+      toDos {
+        id
+        content
+        isCompleted
+      }
+    }
+  }
+`;
+
+interface Props
+  extends NativeStackScreenProps<RootStackParamList, "TodoScreen"> {}
+
+export default function TodoScreen({ navigation, route }: Props) {
   const [title, setTitle] = useState<string>("");
   const [todos, setTodos] = useState<ToDo[]>([
     { id: 1, content: "Buy milk", isCompleted: false, taskList: null },
@@ -26,6 +50,12 @@ export default function TodoScreen({
     { id: 3, content: "Buy pizza", isCompleted: false, taskList: null },
     { id: 4, content: "Buy cereals", isCompleted: false, taskList: null },
   ]);
+  const { data, error, loading } = useQuery<
+    GetTaskListByIdData,
+    GetTaskListByIdVars
+  >(GET_TODOLIST, {
+    variables: { id: route.params.id },
+  });
 
   const createItem = (index: number) => {
     const newTodos = [...todos];

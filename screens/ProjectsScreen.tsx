@@ -18,6 +18,7 @@ import { GetTaskListData } from "../inrterfaces/graphql-Interfaces/getTaskListIn
 import { ToDo } from "../inrterfaces/todoInterface";
 import Animated, { SlideInRight } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { TaskList } from "../inrterfaces/taskListInterface";
 
 const GET_TASKLIST = gql`
   query GetTaskList {
@@ -47,15 +48,6 @@ const GET_TASKLIST = gql`
 //     progress: Float!
 //     users: [User!]!
 //     toDos: [ToDo!]!
-
-export interface TaskList {
-  id: any;
-  title: string;
-  createdAt: string;
-  progress: number;
-  users: User[];
-  toDos: ToDo[];
-}
 
 const renderItem = ({
   item,

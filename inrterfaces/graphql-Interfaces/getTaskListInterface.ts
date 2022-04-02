@@ -1,4 +1,5 @@
-import { TaskList } from "../../screens/ProjectsScreen";
+import { TaskList } from "../taskListInterface";
+
 export interface GetTaskListData {
   getTaskList: TaskList[];
 }

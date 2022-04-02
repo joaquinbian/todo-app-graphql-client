@@ -5,7 +5,7 @@ import Animated, { SlideInRight } from "react-native-reanimated";
 import { styles } from "./styles";
 import { Project } from "../../inrterfaces/projectInterface";
 import { useNavigation } from "@react-navigation/native";
-import { TaskList } from "../../screens/ProjectsScreen";
+import { TaskList } from "../../inrterfaces/taskListInterface";
 
 interface Props {
   project: TaskList;
