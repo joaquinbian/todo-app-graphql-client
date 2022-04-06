@@ -1,4 +1,5 @@
 import { StatusBar } from "expo-status-bar";
+import "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ApolloProvider } from "@apollo/client";

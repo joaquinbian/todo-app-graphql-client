@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -22,6 +23,9 @@ import {
   GetTaskListByIdVars,
 } from "../inrterfaces/graphql-Interfaces/getTaskListByIdInterface";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import useApplyHeaderWorkaround from "../hooks/useApplyHeaderWorkaround";
+import { useHeaderHeight } from "@react-navigation/elements";
+import { StackScreenProps } from "@react-navigation/stack";
 
 const GET_TODOLIST = gql`
   query getTaskListById($id: ID!) {
@@ -39,24 +43,19 @@ const GET_TODOLIST = gql`
   }
 `;
 
-interface Props
-  extends NativeStackScreenProps<RootStackParamList, "TodoScreen"> {}
+interface Props extends StackScreenProps<RootStackParamList, "TodoScreen"> {}
 
 export default function TodoScreen({ navigation, route }: Props) {
-  const [title, setTitle] = useState<string>("");
-  const [todos, setTodos] = useState<ToDo[]>([
-    { id: 1, content: "Buy milk", isCompleted: false, taskList: null },
-    { id: 2, content: "Buy brad", isCompleted: false, taskList: null },
-    { id: 3, content: "Buy pizza", isCompleted: false, taskList: null },
-    { id: 4, content: "Buy cereals", isCompleted: false, taskList: null },
-  ]);
+  const [title, setTitle] = useState<string | undefined>("");
+  const [todos, setTodos] = useState<ToDo[]>([]);
   const { data, error, loading } = useQuery<
     GetTaskListByIdData,
     GetTaskListByIdVars
   >(GET_TODOLIST, {
     variables: { id: route.params.id },
   });
-
+  useApplyHeaderWorkaround(navigation.setOptions);
+  const headerHeight = useHeaderHeight();
   const createItem = (index: number) => {
     const newTodos = [...todos];
     newTodos.splice(index + 1, 0, {
@@ -69,8 +68,21 @@ export default function TodoScreen({ navigation, route }: Props) {
   };
 
   const deleteItem = (id: number) => {
-    setTodos((list) => list.filter((item) => item.id !== id));
+    setTodos((list) => list?.filter((item) => item.id !== id));
   };
+  useEffect(() => {
+    setTodos(data?.getTaskListById?.toDos!);
+    setTitle(data?.getTaskListById.title);
+  }, [data]);
+
+  if (loading) {
+    return (
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size={24} />
+        <Text>loading toDos...</Text>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -83,9 +95,12 @@ export default function TodoScreen({ navigation, route }: Props) {
         {/* <Text style={styles.title}>Tab One</Text> */}
         <TextInput
           style={styles.title}
+          value={title}
+          defaultValue={data?.getTaskListById.title!}
           onChangeText={setTitle}
           placeholder="todo list title..."
-          placeholderTextColor="rgba(255, 255, 255, .3)"
+          // placeholderTextColor="rgba(255, 255, 255, .3)"
+          placeholderTextColor="red"
         />
         <FlatList
           data={todos}
@@ -108,11 +123,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 22,
-    color: "#fff",
+    width: "100%",
+    fontSize: 20,
+    color: "white",
     fontWeight: "bold",
-    // backgroundColor: "red",
-    margin: 5,
+    marginBottom: 12,
   },
   separator: {
     marginVertical: 30,

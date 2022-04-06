@@ -7,6 +7,7 @@ import { gql, useMutation } from "@apollo/client";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
 import { useUser } from "../hooks/useUser";
+import { StackScreenProps } from "@react-navigation/stack";
 import {
   SignInSignUpResponse,
   SignUpVars,
@@ -31,8 +32,7 @@ const SIGN_UP = gql`
   }
 `;
 
-interface Props
-  extends NativeStackScreenProps<RootStackParamList, "SignUpScreen"> {}
+interface Props extends StackScreenProps<RootStackParamList, "SignUpScreen"> {}
 
 const SignUpScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState<string>("");

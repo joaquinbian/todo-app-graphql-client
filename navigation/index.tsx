@@ -33,6 +33,7 @@ import SignUpScreen from "../screens/SignUpScreen";
 import * as SecureStore from "expo-secure-store";
 import { isLoaded } from "expo-font";
 import { useUser } from "../hooks/useUser";
+import { createStackNavigator } from "@react-navigation/stack";
 
 export default function Navigation({
   colorScheme,
@@ -53,7 +54,7 @@ export default function Navigation({
  * A root stack navigator is often used for displaying modals on top of all other content.
  * https://reactnavigation.org/docs/modal
  */
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   const { user } = useUser();
@@ -63,7 +64,9 @@ function RootNavigator() {
         headerTitleAlign: "center",
 
         presentation: "modal",
-        animation: "slide_from_right",
+        animationEnabled: true,
+
+        // animation: "slide_from_right",
       }}
     >
       {!user ? (

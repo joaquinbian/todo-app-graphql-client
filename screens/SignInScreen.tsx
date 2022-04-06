@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { Button, Icon, Input } from "@react-native-elements/base";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { gql, useMutation } from "@apollo/client";
@@ -9,6 +16,7 @@ import * as SecureStore from "expo-secure-store";
 import { RootStackParamList } from "../types";
 import { useUser } from "../hooks/useUser";
 import { User } from "../inrterfaces/userInterface";
+import { StackScreenProps } from "@react-navigation/stack";
 import {
   SignInSignUpResponse,
   SignInVars,
@@ -33,15 +41,14 @@ const SIGN_IN = gql`
   }
 `;
 
-interface Props
-  extends NativeStackScreenProps<RootStackParamList, "SignInScreen"> {}
+interface Props extends StackScreenProps<RootStackParamList, "SignInScreen"> {}
 
 const SignInScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const { login, user } = useUser();
-  const [signIn, { data, loading, error }] = useMutation<
+  const [signIn, { data, loading }] = useMutation<
     { signIn: SignInSignUpResponse },
     SignInVars
   >(SIGN_IN, {
@@ -53,22 +60,26 @@ const SignInScreen = ({ navigation }: Props) => {
       await login(data.signIn.user.user, data.signIn.user.token);
       // navigation.navigate("Home");
     },
+    onError: ({ message }) => {
+      Alert.alert(message);
+    },
   });
-
-  // console.log({ user }, "en signin");
 
   const handlePasswordVisibility = (): void => {
     setPasswordVisible((isVisible) => !isVisible);
   };
 
   const onSubmit = () => {
-    // console.log({ email, password }, "EN SUGNIN");
     signIn();
   };
 
   const signUp = () => {
     navigation.navigate("SignUpScreen");
   };
+
+  console.log({ loading });
+  console.log({ data });
+
   return (
     <View style={styles.container}>
       <Text style={{ color: "white" }}>{email}</Text>

@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   SafeAreaView,
   StatusBar,
@@ -24,6 +25,7 @@ import { Platform } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
 import useApplyHeaderWorkaround from "../hooks/useApplyHeaderWorkaround";
+import { StackScreenProps } from "@react-navigation/stack";
 
 const GET_TASKLIST = gql`
   query GetTaskList {
@@ -47,12 +49,15 @@ const GET_TASKLIST = gql`
   }
 `;
 
-interface Props extends NativeStackScreenProps<RootStackParamList, "Home"> {}
+interface Props extends StackScreenProps<RootStackParamList, "Home"> {}
 
 export default function ProjectsScreen({ navigation }: Props) {
   const [projects, setProjects] = useState<TaskList[]>();
-  const { data, loading, error } = useQuery<GetTaskListData>(GET_TASKLIST);
-  const { top } = useSafeAreaInsets();
+  const { data, loading, error } = useQuery<GetTaskListData>(GET_TASKLIST, {
+    onError: (e) => {
+      Alert.alert(e.message);
+    },
+  });
   useApplyHeaderWorkaround(navigation.setOptions);
 
   useEffect(() => {
@@ -61,18 +66,15 @@ export default function ProjectsScreen({ navigation }: Props) {
 
   if (loading) {
     return (
-      <View
-        style={[
-          styles.container,
-          {
-            marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-          },
-        ]}
-      >
+      <View style={[styles.container]}>
         <ActivityIndicator color="white" size={24} />
         <Text>Loading task list ...</Text>
       </View>
     );
+  }
+
+  if (error) {
+    console.log(error);
   }
 
   return (

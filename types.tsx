@@ -8,7 +8,8 @@ import {
   CompositeScreenProps,
   NavigatorScreenParams,
 } from "@react-navigation/native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+// import { NativeStack } from "@react-navigation/native-stack";
+import { StackScreenProps } from "@react-navigation/stack";
 import TodoScreen from "./screens/ToDoScreen";
 
 declare global {
@@ -31,7 +32,7 @@ export type RootStackParamList = {
 
 export type RootStackScreenProps<
   Screen extends keyof RootStackParamList
-> = NativeStackScreenProps<RootStackParamList, Screen>;
+> = StackScreenProps<RootStackParamList, Screen>;
 
 export type RootTabParamList = {
   TabOne: undefined;
@@ -42,5 +43,5 @@ export type RootTabScreenProps<
   Screen extends keyof RootTabParamList
 > = CompositeScreenProps<
   BottomTabScreenProps<RootTabParamList, Screen>,
-  NativeStackScreenProps<RootStackParamList>
+  StackScreenProps<RootStackParamList>
 >;
