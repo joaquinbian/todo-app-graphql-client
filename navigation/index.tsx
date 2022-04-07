@@ -63,7 +63,7 @@ function RootNavigator() {
       screenOptions={{
         headerTitleAlign: "center",
 
-        presentation: "modal",
+        presentation: "card",
         animationEnabled: true,
 
         // animation: "slide_from_right",

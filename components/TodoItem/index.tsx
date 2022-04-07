@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import React, { useEffect, useRef, useState } from "react";
 import {
   NativeSyntheticEvent,
@@ -10,6 +11,7 @@ import {
 } from "react-native";
 import { ToDo } from "../../inrterfaces/todoInterface";
 import Checkbox from "../Checkbox";
+import { client } from "../../apollo";
 
 interface TodoItemProps {
   todo: ToDo;
@@ -17,10 +19,44 @@ interface TodoItemProps {
   deleteItem: (id: number) => void;
 }
 
+const UPDATE_TODO = gql`
+  mutation updateToDo($id: ID!, $content: String, $isCompleted: Boolean) {
+    updateToDo(id: $id, content: $content, isCompleted: $isCompleted) {
+      toDo {
+        taskList {
+          id
+          progress
+          toDos {
+            id
+            content
+            isCompleted
+          }
+        }
+      }
+    }
+  }
+`;
+
 const TodoItem = ({ todo, createItem, deleteItem }: TodoItemProps) => {
   const input = useRef(null);
   const [isSelected, setIsSelected] = useState<boolean>(todo.isCompleted);
   const [todoContent, setTodoContent] = useState<string>(todo.content);
+
+  const [updateToDo, { data, loading, error }] = useMutation(UPDATE_TODO, {
+    variables: { id: todo.id, isCompleted: isSelected, content: todoContent },
+    onCompleted: (data) => {
+      console.log("me ejecuto onCompleted", todo.content);
+
+      // console.log(data);
+    },
+  });
+
+  const handleUpdateToDo = () => {
+    console.log("me ejecuto update todo");
+
+    updateToDo();
+  };
+
   const handleCheckBox = (): void => {
     setIsSelected((selected) => !selected);
   };
@@ -28,7 +64,6 @@ const TodoItem = ({ todo, createItem, deleteItem }: TodoItemProps) => {
   const onSubmit = (
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>
   ) => {
-    // console.warn("pija");
     console.log({ target: e });
   };
 
@@ -40,6 +75,10 @@ const TodoItem = ({ todo, createItem, deleteItem }: TodoItemProps) => {
     setIsSelected(todo.isCompleted);
     setTodoContent(todo.content);
   }, [todo]);
+
+  // useEffect(() => {
+  //   updateToDo();
+  // }, [todoContent, isSelected]);
 
   useEffect(() => {
     if (input.current) {
@@ -69,7 +108,13 @@ const TodoItem = ({ todo, createItem, deleteItem }: TodoItemProps) => {
 
   return (
     <View style={{ flexDirection: "row", alignItems: "center" }}>
-      <Checkbox isChecked={isSelected} onPress={handleCheckBox} />
+      <Checkbox
+        isChecked={isSelected}
+        onPress={() => {
+          handleCheckBox();
+          handleUpdateToDo();
+        }}
+      />
       <TextInput
         ref={input}
         style={{
@@ -81,6 +126,7 @@ const TodoItem = ({ todo, createItem, deleteItem }: TodoItemProps) => {
         value={todoContent}
         onChangeText={setTodoContent}
         //se ejecuta cuando el boton de submit(enter) se presiona
+        onEndEditing={() => console.log("me ejecuto on end editing ")}
         onSubmitEditing={handleCreateNewItem}
         onKeyPress={handleDeleteTodo}
         //se pierde el focus de donde estabamos cuando ejecutamos el onSubmit

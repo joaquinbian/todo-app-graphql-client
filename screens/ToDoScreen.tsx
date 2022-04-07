@@ -16,7 +16,7 @@ import { RootStackParamList, RootTabScreenProps } from "../types";
 import Checkbox from "../components/Checkbox";
 import TodoItem from "../components/TodoItem";
 import { ToDo } from "../inrterfaces/todoInterface";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { TaskList } from "../inrterfaces/taskListInterface";
 import {
   GetTaskListByIdData,
@@ -43,6 +43,27 @@ const GET_TODOLIST = gql`
   }
 `;
 
+const CREATE_TODO = gql`
+  mutation createToDo($taskListId: ID!, $content: String!) {
+    createToDo(content: $content, taskListId: $taskListId) {
+      toDo {
+        id
+        content
+        isCompleted
+        taskList {
+          id
+          progress
+          toDos {
+            id
+            content
+            isCompleted
+          }
+        }
+      }
+    }
+  }
+`;
+
 interface Props extends StackScreenProps<RootStackParamList, "TodoScreen"> {}
 
 export default function TodoScreen({ navigation, route }: Props) {
@@ -54,17 +75,31 @@ export default function TodoScreen({ navigation, route }: Props) {
   >(GET_TODOLIST, {
     variables: { id: route.params.id },
   });
+
+  const [
+    createTodo,
+    { data: dataMutation, loading: loadingMutation, error: errorMutation },
+  ] = useMutation(CREATE_TODO, {
+    variables: { content: "", taskListId: route.params.id },
+    onCompleted: (data) => {
+      // console.log(data);
+      console.log("me ejecuto on completed del todo screen... puede ser rari");
+    },
+  });
+
   useApplyHeaderWorkaround(navigation.setOptions);
-  const headerHeight = useHeaderHeight();
   const createItem = (index: number) => {
-    const newTodos = [...todos];
-    newTodos.splice(index + 1, 0, {
-      content: "",
-      id: Date.now(),
-      isCompleted: false,
-      taskList: null,
-    });
-    setTodos(newTodos);
+    // const newTodos = [...todos];
+    // newTodos.splice(index + 1, 0, {
+    //   content: "",
+    //   id: Date.now(),
+    //   isCompleted: false,
+    //   taskList: null,
+    // });
+    // setTodos(newTodos);
+    console.log("me ejecuto createItem");
+
+    createTodo();
   };
 
   const deleteItem = (id: number) => {
@@ -102,17 +137,23 @@ export default function TodoScreen({ navigation, route }: Props) {
           // placeholderTextColor="rgba(255, 255, 255, .3)"
           placeholderTextColor="red"
         />
-        <FlatList
-          data={todos}
-          renderItem={({ item, index }) => (
-            <TodoItem
-              createItem={() => createItem(index)}
-              deleteItem={(id) => deleteItem(id)}
-              todo={item}
-            />
-          )}
-          keyExtractor={(item) => item.id.toString()}
-        />
+        {!todos?.length ? (
+          <Text style={{ textAlign: "center", color: "white" }}>
+            no todos to show...
+          </Text>
+        ) : (
+          <FlatList
+            data={todos}
+            renderItem={({ item, index }) => (
+              <TodoItem
+                createItem={() => createItem(index)}
+                deleteItem={(id) => deleteItem(id)}
+                todo={item}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+          />
+        )}
       </View>
     </KeyboardAvoidingView>
   );
